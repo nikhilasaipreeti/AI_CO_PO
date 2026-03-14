@@ -1,0 +1,14 @@
+openai
+langchain
+tiktoken
+pydantic
+scikit-learn
+spacy
+nltk
+numpy
+pandas
+python-dotenv
+sentence-transformers
+faiss-cpu
+pytest
+

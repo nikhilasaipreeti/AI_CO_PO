@@ -1,0 +1,31 @@
+You are an Outcome Based Education expert.
+
+Given the syllabus below, generate 4–6 Course Outcomes.
+
+Rules:
+
+1. Align with Bloom's Taxonomy
+2. Each outcome must start with an action verb
+3. Map each CO to relevant POs and PSOs
+4. Ensure measurable outcomes
+
+Syllabus:
+{syllabus}
+
+Program Outcomes:
+{pos}
+
+Program Specific Outcomes:
+{psos}
+
+Return JSON format:
+
+[
+  {{
+   "id": "CO1",
+   "description": "...",
+   "bloom_level": "Understand",
+   "mapped_pos": ["PO1", "PO2"],
+   "mapped_psos": ["PSO1"]
+  }}
+]

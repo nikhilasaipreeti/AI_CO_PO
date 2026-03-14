@@ -1,0 +1,20 @@
+Map each question to the most relevant Course Outcome.
+
+Rules:
+1. Consider topic relevance
+2. Consider Bloom taxonomy
+3. Each question maps to one CO
+
+Course Outcomes: {cos}
+
+Questions: {questions}
+
+Return JSON:
+[
+  {{
+    "question": "...",
+    "co_id": "CO1",
+    "bloom_level": "Apply",
+    "confidence": 0.9
+  }}
+]
