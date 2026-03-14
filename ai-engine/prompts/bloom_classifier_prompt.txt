@@ -1,0 +1,8 @@
+Classify the Bloom's taxonomy level of the following academic sentence or question.
+
+Levels: Remember, Understand, Apply, Analyze, Evaluate, Create
+
+Question:
+{question}
+
+Return only the Bloom level, e.g. "Understand".
