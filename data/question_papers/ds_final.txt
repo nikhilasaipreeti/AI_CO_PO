@@ -1,0 +1,4 @@
+Q1 Describe tree traversals.
+Q2 Explain graph representations.
+Q3 Implement quick sort.
+Q4 Evaluate heap data structure.

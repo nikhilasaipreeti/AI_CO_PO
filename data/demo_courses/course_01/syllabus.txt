@@ -1,0 +1,21 @@
+Unit 1: Introduction to Computer Networks
+Network models
+OSI architecture
+TCP/IP architecture
+
+Unit 2: Data Link Layer
+Error detection
+Flow control
+Medium access control
+
+Unit 3: Network Layer
+Routing algorithms
+IP addressing
+
+Unit 4: Transport Layer
+TCP protocol
+UDP protocol
+
+Unit 5: Congestion Control
+Traffic shaping
+Quality of service

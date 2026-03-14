@@ -1,0 +1,5 @@
+{
+  "easy": ["define", "list", "identify"],
+  "medium": ["explain", "compare", "summarize"],
+  "hard": ["design", "analyze", "evaluate"]
+}

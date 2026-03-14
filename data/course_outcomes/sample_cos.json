@@ -1,0 +1,7 @@
+{
+  "CO1": "Understand the fundamental concepts of computer networks and OSI/TCP-IP models",
+  "CO2": "Analyze data link layer protocols and error control mechanisms",
+  "CO3": "Design network layer solutions including routing and IP addressing",
+  "CO4": "Evaluate transport layer protocols like TCP and UDP",
+  "CO5": "Apply congestion control techniques for network performance"
+}

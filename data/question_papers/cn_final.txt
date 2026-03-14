@@ -1,0 +1,4 @@
+Q1 Describe the TCP/IP architecture.
+Q2 Explain error detection techniques.
+Q3 Discuss IP addressing and subnetting.
+Q4 Evaluate the role of transport layer in networking.

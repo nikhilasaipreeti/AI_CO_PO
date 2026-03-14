@@ -1,0 +1,21 @@
+Unit 1: Introduction to Data Structures
+Arrays and Linked Lists
+Stacks and Queues
+
+Unit 2: Trees
+Binary Trees
+Binary Search Trees
+AVL Trees
+
+Unit 3: Graphs
+Graph Representations
+Traversal Algorithms
+
+Unit 4: Sorting and Searching
+Quick Sort
+Merge Sort
+Hashing
+
+Unit 5: Advanced Topics
+Heaps
+Dynamic Programming

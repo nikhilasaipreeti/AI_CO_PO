@@ -1,0 +1,4 @@
+Q1 Explain arrays and linked lists.
+Q2 Compare stacks and queues.
+Q3 Design a binary search tree.
+Q4 Analyze sorting algorithms.

@@ -1,0 +1,4 @@
+Q1 Explain OSI model.
+Q2 Compare TCP and UDP.
+Q3 Design a shortest path routing algorithm.
+Q4 Analyze congestion control mechanisms.
