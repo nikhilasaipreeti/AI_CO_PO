@@ -4,6 +4,7 @@ from config.llm_config import get_llm
 from models.schema import QuestionMapping
 from utils.text_cleaner import clean_text
 from utils.embeddings import get_embedding, semantic_search
+import numpy as np
 
 llm = get_llm()
 

@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400;700&family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 36 45% 88%;
+    --foreground: 0 0% 5%;
+    --card: 36 50% 94%;
+    --card-foreground: 0 0% 5%;
+    --popover: 36 50% 94%;
+    --popover-foreground: 0 0% 5%;
+    --primary: 25 80% 30%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 80% 35%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 30 10% 92%;
+    --muted-foreground: 30 8% 45%;
+    --accent: 25 80% 30%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 65% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 10% 85%;
+    --input: 30 10% 83%;
+    --ring: 25 80% 30%;
+    --radius: 0.75rem;
+
+    --bloom-understand: 25 60% 40%;
+    --bloom-apply: 30 70% 45%;
+    --bloom-analyze: 20 65% 35%;
+    --bloom-evaluate: 15 55% 40%;
+    --bloom-create: 35 75% 42%;
+
+    --sidebar-background: 36 35% 90%;
+    --sidebar-foreground: 0 0% 8%;
+    --sidebar-primary: 30 55% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 36 40% 82%;
+    --sidebar-accent-foreground: 0 0% 8%;
+    --sidebar-border: 36 20% 78%;
+    --sidebar-ring: 30 55% 35%;
+
+    --font-body: 'Inter', sans-serif;
+    --font-heading: 'DM Serif Display', 'Playfair Display', serif;
+
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.06);
+    --shadow-elevated: 0 4px 12px -2px rgb(0 0 0 / 0.1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+  }
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.vignan-hero-gradient {
+  background: linear-gradient(135deg, hsl(25 80% 30%) 0%, hsl(25 80% 20%) 60%, hsl(25 80% 15%) 100%);
+}
+
+.vignan-terracotta-stripe {
+  background: hsl(25 80% 30%);
+  height: 3px;
+}
+
+.announcement-bar {
+  @apply bg-primary text-primary-foreground py-4 px-8 rounded-b-3xl shadow-xl mb-0;
+  font-family: var(--font-heading);
+}
+
+  .whatsapp-fab {
+  @apply fixed bottom-8 right-8 z-50 shadow-2xl hover:shadow-xl rounded-3xl px-8 py-4 font-semibold text-sm flex items-center gap-2 bg-[#25D366] text-white hover:bg-[#20b858] transition-all duration-300 hover:-translate-y-1 active:scale-95 no-underline;
+  box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+  font-family: var(--font-body);
+}
+
+.thin-divider {
+  @apply border-t border-border/30 my-8 opacity-75;
+}

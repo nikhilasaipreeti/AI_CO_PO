@@ -202,73 +202,36 @@ const deleteCourse = async(req, res) => {
     }
 };
 
-// @desc    Generate COs for a course
+// @desc    Generate COs for a course (AI)
 // @route   POST /api/courses/:id/generate-cos
-const generateCOs = async(req, res) => {
-    try {
-        const courseId = parseInt(req.params.id);
-        const course = courses.find(c => c.id === courseId);
+const { generateCOs } = require('../src/services/ai-proxy');
 
-        if (!course) {
-            return res.status(404).json({
+const generateCOsHandler = async(req, res) => {
+    try {
+        const { syllabus, courseName } = req.body;
+        const courseId = parseInt(req.params.id);
+
+        if (!syllabus) {
+            return res.status(400).json({
                 success: false,
-                message: 'Course not found'
+                message: 'Syllabus is required'
             });
         }
 
-        // Generate COs based on syllabus (mock)
-        const newCOs = [{
-                id: courseOutcomes.length + 1,
-                courseId,
-                code: 'CO1',
-                description: 'Understand the fundamental concepts of ' + course.name,
-                bloomLevel: 'Understand',
-                mappedPOs: ['PO1', 'PO2'],
-                mappedPSOs: ['PSO1'],
-                aiGenerated: true
-            },
-            {
-                id: courseOutcomes.length + 2,
-                courseId,
-                code: 'CO2',
-                description: 'Apply principles of ' + course.name + ' to solve problems',
-                bloomLevel: 'Apply',
-                mappedPOs: ['PO2', 'PO3'],
-                mappedPSOs: ['PSO1', 'PSO2'],
-                aiGenerated: true
-            },
-            {
-                id: courseOutcomes.length + 3,
-                courseId,
-                code: 'CO3',
-                description: 'Analyze complex problems using ' + course.name + ' techniques',
-                bloomLevel: 'Analyze',
-                mappedPOs: ['PO2', 'PO4'],
-                mappedPSOs: ['PSO2'],
-                aiGenerated: true
-            },
-            {
-                id: courseOutcomes.length + 4,
-                courseId,
-                code: 'CO4',
-                description: 'Design and implement solutions using ' + course.name,
-                bloomLevel: 'Create',
-                mappedPOs: ['PO3', 'PO5'],
-                mappedPSOs: ['PSO1', 'PSO2'],
-                aiGenerated: true
-            }
-        ];
+        // Load PO/PSO from data
+        const pos = Object.values(require('../../data/program_outcomes/engineering_pos.json'));
+        const psos = Object.values(require('../../data/program_specific_outcomes/cse_psos.json'));
 
-        courseOutcomes.push(...newCOs);
-
-        // Update course status
-        const courseIndex = courses.findIndex(c => c.id === courseId);
-        courses[courseIndex].status = 'active';
-        courses[courseIndex].mappingCompleted = true;
+        const cos = await generateCOs(syllabus, pos, psos, courseName || 'Course');
 
         res.status(200).json({
             success: true,
-            data: newCOs
+            data: cos.map((co, index) => ({
+                code: co.code || co.id || `CO${index + 1}`,
+                description: co.description,
+                bloomLevel: co.bloomLevel || co.bloom_level || 'Understand',
+                aiGenerated: true
+            }))
         });
     } catch (error) {
         console.error('Generate COs error:', error);
@@ -306,6 +269,6 @@ module.exports = {
     getCourse,
     updateCourse,
     deleteCourse,
-    generateCOs,
+    generateCOs: generateCOsHandler,
     getCourseCOs
 };

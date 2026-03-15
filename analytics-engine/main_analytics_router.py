@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
 import uvicorn
 import os
@@ -40,8 +40,15 @@ async def full_analytics(request: AnalyticsRequest):
 @app.post("/upload_excel")
 async def upload_excel(file: UploadFile = File(...)):
     """Upload Excel for analysis."""
-    data = load_data_from_excel(file.file)
-    return full_analytics({'data': data})
+    try:
+        data = load_data_from_excel(file.file, file.filename or "")
+        return await full_analytics(AnalyticsRequest(data=data))
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)

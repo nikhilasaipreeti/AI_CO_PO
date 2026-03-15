@@ -1,4 +1,5 @@
 // Mock exams data
+const { mapQuestions, classifyBloom } = require('../src/services/ai-proxy');
 let exams = [{
         id: 1,
         courseId: 1,
@@ -159,50 +160,26 @@ const getExamById = async(req, res) => {
     }
 };
 
-// @desc    Map questions to COs
+// @desc    Map questions to COs (AI)
 // @route   POST /api/assessment/exam/:examId/map-questions
 const mapQuestionsToCOs = async(req, res) => {
     try {
+        const { questions, cos } = req.body;
         const examId = parseInt(req.params.examId);
-        const exam = exams.find(e => e.id === examId);
 
-        if (!exam) {
-            return res.status(404).json({
+        if (!questions || !cos) {
+            return res.status(400).json({
                 success: false,
-                message: 'Exam not found'
+                message: 'Questions and COs required'
             });
         }
 
-        // Get questions for this exam
-        const examQuestions = questions.filter(q => q.examId === examId);
-
-        // Map each question to a CO (mock mapping)
-        const mappedQuestions = examQuestions.map((q, index) => {
-            const coId = (index % 3) + 1; // Alternate between CO1, CO2, CO3
-            const bloomLevels = ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create'];
-            const bloomLevel = bloomLevels[index % 6];
-
-            // Update question
-            q.mappedCO = coId;
-            q.bloomLevel = bloomLevel;
-            q.aiClassified = true;
-
-            return {
-                questionId: q.id,
-                questionNumber: q.questionNumber,
-                mappedCO: `CO${coId}`,
-                bloomLevel: bloomLevel,
-                confidence: 0.85 + (Math.random() * 0.1)
-            };
-        });
-
-        // Update exam status
-        const examIndex = exams.findIndex(e => e.id === examId);
-        exams[examIndex].status = 'questions_mapped';
+        const mappings = await mapQuestions(questions, cos);
 
         res.status(200).json({
             success: true,
-            data: mappedQuestions
+            data: mappings,
+            examId
         });
     } catch (error) {
         console.error('Map questions error:', error);
@@ -219,16 +196,21 @@ const classifyBloomLevel = async(req, res) => {
     try {
         const { question } = req.body;
 
-        // Mock classification
-        const bloomLevels = ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create'];
-        const randomLevel = bloomLevels[Math.floor(Math.random() * bloomLevels.length)];
+        if (!question) {
+            return res.status(400).json({
+                success: false,
+                message: 'Question is required'
+            });
+        }
+
+        const result = await classifyBloom(question);
 
         res.status(200).json({
             success: true,
             data: {
-                question,
-                bloomLevel: randomLevel,
-                confidence: 0.9
+                question: result.text || question,
+                bloomLevel: result.bloom_level || result.bloomLevel || 'Understand',
+                confidence: result.confidence || 0.8
             }
         });
     } catch (error) {

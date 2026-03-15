@@ -11,4 +11,7 @@ python-dotenv
 sentence-transformers
 faiss-cpu
 pytest
+fastapi
+uvicorn[standard]
+google-generativeai
 

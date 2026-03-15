@@ -1,4 +1,6 @@
-from typing import List, Dict, Any
+from typing import Dict, Any
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from services.co_generator import generate_course_outcomes
 from services.question_mapper import map_questions_to_cos
 from services.bloom_classifier import classify_bloom
@@ -29,5 +31,28 @@ def route_request(service_type: str, **kwargs) -> Dict[str, Any]:
     elif service_type == 'co_coverage':
         return co_coverage(kwargs['questions'], kwargs['cos'])
     return {'error': 'Unknown service'}
+
+app = FastAPI(title="AI Engine")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+@app.post("/analyze")
+async def analyze(payload: Dict[str, Any]):
+    if "service_type" not in payload:
+        raise HTTPException(status_code=400, detail="service_type is required")
+    service_type = payload.pop("service_type")
+    try:
+        return route_request(service_type, **payload)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 

@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:7
+    container_name: co-po-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: co-po-backend
+    ports:
+      - "5000:5000"
+    environment:
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/CO_PO?authSource=admin
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      NODE_ENV: production
+      AI_ENGINE_URL: http://ai-engine:8000
+      ANALYTICS_ENGINE_URL: http://analytics-engine:8001
+    depends_on:
+      - mongodb
+      - ai-engine
+      - analytics-engine
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: co-po-frontend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
+  ai-engine:
+    build: ./ai-engine
+    container_name: co-po-ai
+    ports:
+      - "8000:8000"
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    restart: unless-stopped
+
+  analytics-engine:
+    build: ./analytics-engine
+    container_name: co-po-analytics
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+
