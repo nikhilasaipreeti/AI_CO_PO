@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased;
+    background-color: #fdf6ee;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 text-white rounded-lg font-semibold transition-all;
+    background: linear-gradient(135deg, #7c3a1e, #c8762a);
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 rounded-lg font-medium border-2 transition-all;
+    color: #7c3a1e;
+    border-color: #a0522d;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-sm transition-all border;
+    border-color: #f0dcc8;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border rounded-lg focus:outline-none transition-all;
+    border-color: #e8c9a0;
+  }
+}

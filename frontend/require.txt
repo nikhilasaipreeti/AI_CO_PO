@@ -1,0 +1,5 @@
+npx create-react-app frontend
+cd frontend
+npm install axios react-router-dom chart.js react-chartjs-2 tailwindcss @headlessui/react @heroicons/react react-hot-toast jspdf jspdf-autotable xlsx react-dropzone
+npm install -D autoprefixer postcss
+npx tailwindcss init -p

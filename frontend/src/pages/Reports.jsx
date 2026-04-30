@@ -1,0 +1,379 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  DocumentTextIcon,
+  ArrowDownTrayIcon,
+  DocumentArrowDownIcon,
+  TableCellsIcon,
+  PresentationChartBarIcon,
+  ClockIcon,
+  CheckCircleIcon,
+  AcademicCapIcon,
+  UserGroupIcon,
+  BuildingOfficeIcon
+} from '@heroicons/react/24/outline';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import toast from 'react-hot-toast';
+
+const Reports = () => {
+  const [reportType, setReportType] = useState('course');
+  const [format, setFormat] = useState('pdf');
+  const [selectedCourse, setSelectedCourse] = useState('CS101');
+  const [dateRange, setDateRange] = useState('semester');
+  const [generating, setGenerating] = useState(false);
+
+  const courses = ['CS101', 'CS201', 'CS301', 'CS401', 'CS501'];
+  const departments = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical'];
+
+  const reportTemplates = [
+    {
+      id: 'course',
+      name: 'Course Report',
+      description: 'Detailed report of course outcomes, assessments, and attainment',
+      icon: AcademicCapIcon,
+      color: 'blue'
+    },
+    {
+      id: 'program',
+      name: 'Program Report',
+      description: 'Program-level attainment analysis with PO/PSO mapping',
+      icon: BuildingOfficeIcon,
+      color: 'purple'
+    },
+    {
+      id: 'student',
+      name: 'Student Performance Report',
+      description: 'Individual student performance across all courses',
+      icon: UserGroupIcon,
+      color: 'green'
+    },
+    {
+      id: 'accreditation',
+      name: 'Accreditation Report',
+      description: 'NBA/NAAC ready format with all required data',
+      icon: PresentationChartBarIcon,
+      color: 'orange'
+    }
+  ];
+
+  const recentReports = [
+    {
+      id: 1,
+      name: 'CS101_CO_Attainment_Report.pdf',
+      type: 'Course Report',
+      generated: '2024-03-15 10:30 AM',
+      size: '2.4 MB',
+      status: 'ready'
+    },
+    {
+      id: 2,
+      name: 'CSE_Program_Attainment_Q1_2024.xlsx',
+      type: 'Program Report',
+      generated: '2024-03-14 03:45 PM',
+      size: '1.8 MB',
+      status: 'ready'
+    },
+    {
+      id: 3,
+      name: 'Student_Performance_CS_Batch_2024.pdf',
+      type: 'Student Report',
+      generated: '2024-03-13 11:20 AM',
+      size: '5.2 MB',
+      status: 'ready'
+    }
+  ];
+
+  const handleGenerateReport = () => {
+    setGenerating(true);
+    
+    // Simulate report generation
+    setTimeout(() => {
+      setGenerating(false);
+      
+      if (format === 'pdf') {
+        generatePDF();
+      } else {
+        generateExcel();
+      }
+      
+      toast.success('Report generated successfully!');
+    }, 2000);
+  };
+
+  const generatePDF = () => {
+  const doc = new jsPDF();
+  
+  // Add header with logo
+  doc.setFillColor(59, 130, 246);
+  doc.rect(0, 0, 210, 40, 'F');
+  
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.text('CO-PO-PSO Attainment Report', 20, 20);
+  
+  doc.setFontSize(12);
+  doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 30);
+  
+  // Reset text color
+  doc.setTextColor(0, 0, 0);
+  
+  // Course Info
+  doc.setFontSize(16);
+  doc.text('Course Information', 20, 50);
+  doc.setFontSize(12);
+  doc.text(`Course: ${selectedCourse}`, 20, 60);
+  doc.text(`Report Type: ${reportTemplates.find(t => t.id === reportType)?.name}`, 20, 65);
+  
+  // CO Attainment Table
+  doc.autoTable({
+    startY: 75,
+    head: [['CO', 'Description', 'Bloom\'s Level', 'Attainment %', 'Level', 'Status']],
+    body: [
+      ['CO1', 'Understand programming concepts', 'Understand', '68%', 'Level 2', 'Achieved'],
+      ['CO2', 'Apply programming constructs', 'Apply', '74%', 'Level 3', 'Achieved'],
+      ['CO3', 'Analyze problems', 'Analyze', '55%', 'Level 1', 'Below Target'],
+      ['CO4', 'Design solutions', 'Create', '82%', 'Level 3', 'Achieved'],
+    ],
+    headStyles: { fillColor: [59, 130, 246] },
+    alternateRowStyles: { fillColor: [240, 240, 240] }
+  });
+  
+  // PO Attainment Table
+  doc.autoTable({
+    startY: doc.lastAutoTable.finalY + 10,
+    head: [['PO', 'Attainment %', 'Level', 'Status']],
+    body: [
+      ['PO1', '70%', 'Level 3', 'Achieved'],
+      ['PO2', '65%', 'Level 2', 'Achieved'],
+      ['PO3', '72%', 'Level 3', 'Achieved'],
+      ['PO4', '58%', 'Level 1', 'Below Target'],
+    ],
+    headStyles: { fillColor: [139, 92, 246] }
+  });
+  
+  // Summary
+  const finalY = doc.lastAutoTable.finalY + 10;
+  doc.setFontSize(14);
+  doc.text('Executive Summary', 20, finalY);
+  doc.setFontSize(11);
+  doc.text('Overall CO attainment average: 69.8%', 20, finalY + 7);
+  doc.text('COs achieving Level 3: 2', 20, finalY + 14);
+  doc.text('COs needing improvement: CO3 (55%)', 20, finalY + 21);
+  
+  // Footer
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(10);
+    doc.setTextColor(150, 150, 150);
+    doc.text(`Page ${i} of ${pageCount}`, 180, 290);
+    doc.text('Generated by OBE AI System', 20, 290);
+  }
+  
+  doc.save(`${selectedCourse}_attainment_report.pdf`);
+};
+  const generateExcel = () => {
+    const data = [
+      ['CO-PO-PSO Attainment Report'],
+      [`Course: ${selectedCourse}`],
+      [`Generated: ${new Date().toLocaleDateString()}`],
+      [],
+      ['CO', 'Attainment %', 'Level', 'Status'],
+      ['CO1', '68%', 'Level 2', 'Achieved'],
+      ['CO2', '74%', 'Level 3', 'Achieved'],
+      ['CO3', '55%', 'Level 1', 'Below Target'],
+      ['CO4', '82%', 'Level 3', 'Achieved'],
+      [],
+      ['PO', 'Attainment %', 'Level', 'Status'],
+      ['PO1', '70%', 'Level 3', 'Achieved'],
+      ['PO2', '65%', 'Level 2', 'Achieved'],
+      ['PO3', '72%', 'Level 3', 'Achieved'],
+    ];
+    
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Attainment Report');
+    XLSX.writeFile(wb, `${selectedCourse}_attainment_report.xlsx`);
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center space-x-4">
+        <div className="p-3 bg-orange-100 rounded-lg">
+          <DocumentTextIcon className="h-8 w-8 text-orange-600" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Reports</h1>
+          <p className="text-gray-600 mt-1">Generate and download attainment reports</p>
+        </div>
+      </div>
+
+      {/* Report Templates */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {reportTemplates.map((template) => (
+          <motion.div
+            key={template.id}
+            whileHover={{ scale: 1.02 }}
+            className={`bg-white rounded-xl shadow-md p-6 cursor-pointer border-2 transition-all ${
+              reportType === template.id ? 'border-blue-500' : 'border-transparent'
+            }`}
+            onClick={() => setReportType(template.id)}
+          >
+            <div className={`p-3 bg-${template.color}-100 rounded-lg w-fit mb-4`}>
+              <template.icon className={`h-6 w-6 text-${template.color}-600`} />
+            </div>
+            <h3 className="font-semibold text-gray-800 mb-2">{template.name}</h3>
+            <p className="text-sm text-gray-600">{template.description}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Report Configuration */}
+      <div className="bg-white rounded-xl shadow-md p-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-6">Configure Report</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Select Course</label>
+            <select
+              value={selectedCourse}
+              onChange={(e) => setSelectedCourse(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              {courses.map(course => (
+                <option key={course} value={course}>{course}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+            <select
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="semester">This Semester</option>
+              <option value="academic">Academic Year</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Export Format</label>
+            <div className="flex space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  value="pdf"
+                  checked={format === 'pdf'}
+                  onChange={(e) => setFormat(e.target.value)}
+                  className="mr-2"
+                />
+                <DocumentArrowDownIcon className="h-5 w-5 text-red-500 mr-1" />
+                PDF
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  value="excel"
+                  checked={format === 'excel'}
+                  onChange={(e) => setFormat(e.target.value)}
+                  className="mr-2"
+                />
+                <TableCellsIcon className="h-5 w-5 text-green-500 mr-1" />
+                Excel
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={handleGenerateReport}
+            disabled={generating}
+            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 disabled:opacity-50 flex items-center"
+          >
+            {generating ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Generating...
+              </>
+            ) : (
+              <>
+                <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
+                Generate Report
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Recent Reports */}
+      <div className="bg-white rounded-xl shadow-md p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold text-gray-800">Recent Reports</h2>
+          <button className="text-sm text-orange-600 hover:text-orange-700">View All</button>
+        </div>
+        
+        <div className="space-y-3">
+          {recentReports.map((report) => (
+            <div key={report.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                  <DocumentTextIcon className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-800">{report.name}</h3>
+                  <div className="flex items-center text-xs text-gray-500 mt-1">
+                    <span>{report.type}</span>
+                    <span className="mx-2">•</span>
+                    <ClockIcon className="h-3 w-3 mr-1" />
+                    {report.generated}
+                    <span className="mx-2">•</span>
+                    <span>{report.size}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                <button className="p-2 hover:bg-gray-200 rounded-lg">
+                  <ArrowDownTrayIcon className="h-4 w-4 text-gray-600" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Scheduled Reports */}
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Schedule Automated Reports</h2>
+        <p className="text-gray-600 mb-4">Set up recurring reports to be generated automatically</p>
+        
+        <div className="flex space-x-4">
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <option>Weekly</option>
+            <option>Monthly</option>
+            <option>Quarterly</option>
+          </select>
+          
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <option>Course Report</option>
+            <option>Program Report</option>
+            <option>Student Report</option>
+          </select>
+          
+          <button className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+            Schedule
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Reports;
